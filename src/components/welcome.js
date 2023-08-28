@@ -14,13 +14,7 @@ function welcome(navigateTo) {
       <div class="overlay-image"></div>
     </form>
   `;
-  const nameUser = section.querySelector('.name-user');
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      nameUser.textContent = user.displayName;
-    }
-  });
   const formWelcome = section.querySelector('.welcome-view');
   formWelcome.addEventListener('submit', (e) => {
     e.preventDefault();
