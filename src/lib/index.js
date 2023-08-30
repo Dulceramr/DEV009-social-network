@@ -53,8 +53,8 @@ export const signOutUser = async () => {
 // Función para agregar un nuevo post
 export const addPost = async (author, content, date) => {
   const postsCollection = collection(db, 'posts');
-  await addDoc(postsCollection, {
-    author,
+  await addDoc(postsCollection, { //addDoc. función para agregar un nuevo documento a una colección, referencia a colección 
+    author, //objeto a agregar como nuevo documento en la colección 
     content,
     date,
     likesArr: [],
@@ -64,19 +64,19 @@ export const addPost = async (author, content, date) => {
 
 // Función para eliminar un post
 export const deletePost = async (postRef) => {
-  await deleteDoc(postRef);
+  await deleteDoc(postRef); // funcion para eliminar un documento específico en la base de datos.
 };
 
 // Función para mostrar los posts del usuario actual
 export const displayUserPosts = async (user, containerElement) => {
   const postsQuery = query(collection(db, 'posts'), where('author', '==', user.displayName), orderBy('date', 'desc'));
-  const postsSnapshot = await getDocs(postsQuery);
+  const postsSnapshot = await getDocs(postsQuery);//usa getDocs para obtener una instantanea de los documentos que coinciden con la consulta
 
   containerElement.innerHTML = '';
 
-  postsSnapshot.forEach((doc) => {
-    const post = doc.data();
-    let userGaveLike = post.likesArr.includes(user.uid);
+  postsSnapshot.forEach((doc) => { //iterar sobre cada documento (post) obtenido en la instantánea
+    const post = doc.data(); //extrae los datos del post 
+    let userGaveLike = post.likesArr.includes(user.uid); //determina si el usuario le dio like al post 
     const postElement = document.createElement('div');
     const isCurrentUserPost = post.author === user.displayName;
     const authorPhotoURL = isCurrentUserPost ? (user.photoURL || './img/person-circle.svg') : './img/person-circle.svg';
@@ -103,28 +103,20 @@ export const displayUserPosts = async (user, containerElement) => {
 
     likeButton.addEventListener('click', async () => {
       const userId = user.uid;
-      const arrayLinks = post.likesArr;
-      console.log(arrayLinks);
 
       const tempLikesArray = post.likesArr || [];
-      console.log(tempLikesArray);
       userGaveLike = tempLikesArray.includes(userId);
-      console.log(userGaveLike);
 
       try {
         if (userGaveLike) {
           const indexUserLikesArray = tempLikesArray.indexOf(userId);
           tempLikesArray.splice(indexUserLikesArray, 1);
-          console.log(tempLikesArray);
           const likesArrayLength = tempLikesArray.length;
 
           await updateDoc(doc.ref, { likesArr: tempLikesArray });
           await updateDoc(doc.ref, { likesSum: likesArrayLength });
           like.src = './img/heart-no-fill.svg';
           likeCounter.textContent = `${likesArrayLength}  likes`;
-          console.log(post.likesArr);
-          console.log(tempLikesArray);
-          console.log(post.likesSum);
         } else {
           tempLikesArray.push(userId);
           const likesArrayLength = tempLikesArray.length;
@@ -132,8 +124,6 @@ export const displayUserPosts = async (user, containerElement) => {
           await updateDoc(doc.ref, { likesSum: likesArrayLength });
           like.src = './img/heart-fill.svg';
           likeCounter.textContent = `${likesArrayLength}  Likes`;
-          console.log(post.likesArr);
-          console.log(tempLikesArray);
         }
       } catch (error) {
         console.error('Error updating the post:', error);
@@ -230,9 +220,7 @@ export const displayAllUserPosts = async (user, containerElement) => {
 
   postsSnapshot.forEach((doc) => {
     const post = doc.data();
-    console.log(`likes array in displayAllUserPosts: ${post.likesArr}`);
     let userGaveLike = post.likesArr.includes(user.uid);
-    console.log(userGaveLike);
     const postElement = document.createElement('div');
     postElement.classList.add('user-post');
 
@@ -260,28 +248,20 @@ export const displayAllUserPosts = async (user, containerElement) => {
 
     likeButton.addEventListener('click', async () => {
       const userId = user.uid;
-      const arrayLinks = post.likesArr;
-      console.log(arrayLinks);
 
       const tempLikesArray = post.likesArr || [];
-      console.log(tempLikesArray);
       userGaveLike = tempLikesArray.includes(userId);
-      console.log(userGaveLike);
 
       try {
         if (userGaveLike) {
           const indexUserLikesArray = tempLikesArray.indexOf(userId);
           tempLikesArray.splice(indexUserLikesArray, 1);
-          console.log(tempLikesArray);
           const likesArrayLength = tempLikesArray.length;
 
           await updateDoc(doc.ref, { likesArr: tempLikesArray });
           await updateDoc(doc.ref, { likesSum: likesArrayLength });
           like.src = './img/heart-no-fill.svg';
           likeCounter.textContent = `${likesArrayLength}  likes`;
-          console.log(post.likesArr);
-          console.log(tempLikesArray);
-          console.log(post.likesSum);
         } else {
           tempLikesArray.push(userId);
           const likesArrayLength = tempLikesArray.length;
@@ -289,8 +269,6 @@ export const displayAllUserPosts = async (user, containerElement) => {
           await updateDoc(doc.ref, { likesSum: likesArrayLength });
           like.src = './img/heart-fill.svg';
           likeCounter.textContent = `${likesArrayLength}  Likes`;
-          console.log(post.likesArr);
-          console.log(tempLikesArray);
         }
       } catch (error) {
         console.error('Error updating the post:', error);
@@ -330,7 +308,6 @@ export const displayAllUserPosts = async (user, containerElement) => {
             const newContent = editForm.querySelector('.edit-content').value;
             try {
               await updateDoc(doc.ref, { content: newContent });
-              console.log(`doc.ref in saveButton: ${doc.ref}`);
               post.content = newContent;
               const contentElement = postElement.querySelector('.post-content');
               contentElement.textContent = newContent;
